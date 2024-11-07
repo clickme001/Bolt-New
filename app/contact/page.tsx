@@ -6,10 +6,12 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
+import { useForm } from "react-hook-form";
 
 export default function Contact() {
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const { register, handleSubmit, formState: { errors } } = useForm();
+
+  const onSubmit = (data: any) => {
     toast({
       title: "Message sent!",
       description: "We'll get back to you as soon as possible.",
@@ -69,32 +71,37 @@ export default function Contact() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <Card className="p-6">
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" data-netlify="true" name="contact">
+              <input type="hidden" name="form-name" value="contact" />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
                     Name
                   </label>
-                  <Input id="name" required />
+                  <Input id="name" {...register("name", { required: "Name is required" })} aria-invalid={errors.name ? "true" : "false"} />
+                  {errors.name && <p role="alert" className="text-red-500 mt-1">{errors.name.message}</p>}
                 </div>
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                     Email
                   </label>
-                  <Input type="email" id="email" required />
+                  <Input type="email" id="email" {...register("email", { required: "Email is required" })} aria-invalid={errors.email ? "true" : "false"} />
+                  {errors.email && <p role="alert" className="text-red-500 mt-1">{errors.email.message}</p>}
                 </div>
               </div>
               <div>
                 <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-1">
                   Subject
                 </label>
-                <Input id="subject" required />
+                <Input id="subject" {...register("subject", { required: "Subject is required" })} aria-invalid={errors.subject ? "true" : "false"} />
+                {errors.subject && <p role="alert" className="text-red-500 mt-1">{errors.subject.message}</p>}
               </div>
               <div>
                 <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
                   Message
                 </label>
-                <Textarea id="message" rows={6} required />
+                <Textarea id="message" rows={6} {...register("message", { required: "Message is required" })} aria-invalid={errors.message ? "true" : "false"} />
+                {errors.message && <p role="alert" className="text-red-500 mt-1">{errors.message.message}</p>}
               </div>
               <Button type="submit" className="w-full bg-[#C5A572] hover:bg-[#B39362]">
                 Send Message
